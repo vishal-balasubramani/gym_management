@@ -126,15 +126,52 @@ export const addTrainer = async (req, res) => {
   const client = await pool.connect();
   try {
     const { name, email, phone, specialization, experience_years, bio } = req.body;
+    
     await client.query('BEGIN');
-    const plainPassword = generatePassword(12);
+
+    // 1. Ensure generatePassword exists or define a fallback
+    const plainPassword = typeof generatePassword === 'function' 
+      ? generatePassword(12) 
+      : Math.random().toString(36).slice(-10); // fallback generator
+
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
-    const userRes = await client.query(`INSERT INTO users (name, email, phone, password, role) VALUES ($1, $2, $3, $4, 'trainer') RETURNING id`, [name, email, phone, hashedPassword]);
-    await client.query(`INSERT INTO trainers (user_id, specialization, experience_years, bio) VALUES ($1, $2, $3, $4)`, [userRes.rows[0].id, specialization, experience_years, bio]);
+
+    // 2. Insert into users
+    const userRes = await client.query(
+      `INSERT INTO users (name, email, phone, password, role) 
+       VALUES ($1, $2, $3, $4, 'trainer') RETURNING id`, 
+      [name, email, phone, hashedPassword]
+    );
+
+    const userId = userRes.rows[0].id;
+
+    // 3. Insert into trainers (Parsing experience_years to Integer)
+    await client.query(
+      `INSERT INTO trainers (user_id, specialization, experience_years, bio) 
+       VALUES ($1, $2, $3, $4)`, 
+      [userId, specialization, parseInt(experience_years) || 0, bio]
+    );
+
     await client.query('COMMIT');
-    sendWelcomeEmail(email, name, plainPassword);
-    res.status(201).json({ success: true });
-  } catch (error) { await client.query('ROLLBACK'); res.status(500).json({ error: error.message }); } finally { client.release(); }
+
+    // 4. Send email (optional check to prevent crash if service is down)
+    if (typeof sendWelcomeEmail === 'function') {
+      await sendWelcomeEmail(email, name, plainPassword);
+    }
+
+    // 5. SUCCESS: Return the object the frontend is looking for
+    res.status(201).json({ 
+      success: true, 
+      trainer: { email, password: plainPassword } 
+    });
+
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error("Error adding trainer:", error); // Check your terminal for this!
+    res.status(500).json({ success: false, message: error.message });
+  } finally {
+    client.release();
+  }
 };
 
 export const updateTrainer = async (req, res) => {

@@ -64,12 +64,7 @@ export default function MembersTab() {
             Active registered members
           </p>
         </div>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-all flex items-center gap-2 font-bold shadow-lg shadow-blue-500/20 border border-blue-500/50"
-        >
-          <FaPlus /> Add Member
-        </button>
+        
       </div>
 
       {/* Search Bar */}

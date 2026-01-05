@@ -48,9 +48,9 @@ export const sendWelcomeEmail = async (memberEmail, memberName, password) => {
             
             <p><strong>Next Steps:</strong></p>
             <ul>
-              <li>Complete your payment to activate your membership</li>
-              <li>Meet your personal trainer</li>
-              <li>Start your fitness journey!</li>
+              <li>Complete your professional profile to verify your credentials</li>
+              <li>Find and connect with your assigned trainees</li>
+              <li>Create workout and diet plans to guide their fitness journey!</li>
             </ul>
             
             <a href="http://localhost:5173/signin" class="button">Login Now 🚀</a>

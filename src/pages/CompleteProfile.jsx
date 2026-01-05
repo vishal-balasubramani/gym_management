@@ -21,7 +21,7 @@ const CompleteProfile = () => {
     e.preventDefault()
     setLoading(true)
     
-    if (!details.height || !details.current_weight || !details.phone) {
+    if (!details.height || !details.current_weight ) {
         alert("Please fill in all fields.")
         setLoading(false)
         return
