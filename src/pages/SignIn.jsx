@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaDumbbell } from 'react-icons/fa'
+
 import { authAPI } from '../services/api'
 
 const SignIn = () => {
@@ -84,9 +85,16 @@ const SignIn = () => {
                   disabled={loading}
                 />
               </div>
-
               <div>
-                <label className="block text-gray-300 mb-2 text-sm">Password</label>
+                <div className="flex justify-between mb-2">
+                  <label className="text-gray-300 text-sm">Password</label>
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-crimson text-xs hover:underline transition-all"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
                 <input
                   type="password"
                   name="password"

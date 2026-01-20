@@ -58,6 +58,18 @@ export const authAPI = {
   logout: () => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+  },
+
+
+  forgotPassword: async (emailData) => {
+    const response = await api.post('/auth/forgot-password', emailData)
+    return response.data
+  },
+
+resetPassword: async (resetData) => {
+    // resetData should contain { token, newPassword }
+    const response = await api.post('/auth/reset-password', resetData);
+    return response.data;
   }
 }
 
@@ -102,5 +114,6 @@ export const traineeAPI = {
     return response.data
   }
 }
+resetPassword: (data) => api.post('/auth/reset-password', data)
 
 export default api
